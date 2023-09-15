@@ -1,6 +1,6 @@
-from rest_api.query.admin_rest import AdminRest
-from rest_api.query.query_functions import QueryFunctions
-from rest_api.query.query_settings import QuerySettings
+from cb_server_rest_util.query.admin_rest import AdminRest
+from cb_server_rest_util.query.query_functions import QueryFunctions
+from cb_server_rest_util.query.query_settings import QuerySettings
 
 
 class QueryRestAPI(AdminRest, QuerySettings, QueryFunctions):

@@ -8,9 +8,9 @@ import requests
 import time
 
 from Cb_constants import CbServer, ClusterRun, constants
+from cb_server_rest_util import httplib2
 from common_lib import sleep
 from custom_exceptions.exception import ServerUnavailableException
-from membase.api import httplib2
 
 
 class CBRestConnection(object):
@@ -148,8 +148,7 @@ class CBRestConnection(object):
         # For tracking sessions (if any)
         self.session = None
 
-        self.log = logging.getLogger("rest_api")
-
+        self.log = logging.getLogger("cb_server_rest_util")
 
     def create_headers(self, username=None, password=None,
                        content_type='application/x-www-form-urlencoded'):
@@ -248,9 +247,7 @@ class CBRestConnection(object):
                     raise ServerUnavailableException(ip=self.ip)
             sleep(3, log_type="infra")
 
-
-    def http_request(self, api, method='GET', params='', headers=None,
-                      timeout=300):
+    def http_request(self, api, method='GET', params='', headers=None, timeout=300):
         if not headers:
             headers = self.create_headers()
         if CbServer.use_https:

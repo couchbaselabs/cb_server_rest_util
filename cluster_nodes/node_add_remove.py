@@ -1,7 +1,7 @@
 """
 https://docs.couchbase.com/server/current/rest-api/rest-adding-and-removing-nodes.html
 """
-from rest_api.connection import CBRestConnection
+from cb_server_rest_util.connection import CBRestConnection
 
 
 class NodeAdditionRemoval(CBRestConnection):
@@ -29,3 +29,4 @@ class NodeAdditionRemoval(CBRestConnection):
         docs.couchbase.com/server/current/rest-api/rest-cluster-removenode.html
         """
         raise NotImplementedError()
+

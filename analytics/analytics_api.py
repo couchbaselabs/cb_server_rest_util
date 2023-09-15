@@ -1,4 +1,4 @@
-from rest_api.connection import CBRestConnection
+from cb_server_rest_util.connection import CBRestConnection
 
 
 class AnalyticsRestAPI(CBRestConnection):
