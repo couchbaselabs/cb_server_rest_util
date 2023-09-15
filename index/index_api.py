@@ -1,4 +1,4 @@
-from rest_api.index.index_settings import IndexSettings
+from cb_server_rest_util.index.index_settings import IndexSettings
 
 
 class IndexRestAPI(IndexSettings):
