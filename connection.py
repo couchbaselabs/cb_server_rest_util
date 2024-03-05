@@ -7,7 +7,7 @@ import traceback
 import requests
 import time
 
-from Cb_constants import CbServer, ClusterRun, constants
+from cb_constants import CbServer, ClusterRun, constants
 from common_lib import sleep
 from custom_exceptions.exception import ServerUnavailableException
 from membase.api import httplib2
@@ -27,10 +27,6 @@ class CBRestConnection(object):
             if val.startswith("Basic "):
                 return "auth: " + base64.decodestring(val[6:])
         return ""
-
-    @staticmethod
-    def urlencode(params):
-        return urllib.urlencode(params)
 
     @staticmethod
     def json_from_str(content):
@@ -77,8 +73,8 @@ class CBRestConnection(object):
                 eventing_port = CbServer.ssl_eventing_port
                 backup_port = CbServer.ssl_backup_port
 
-        http_url = "http://{0}:{1}/"
-        https_url = "https://{0}:{1}/"
+        http_url = "http://{0}:{1}"
+        https_url = "https://{0}:{1}"
         generic_url = http_url
         if CbServer.use_https:
             generic_url = https_url
@@ -97,7 +93,7 @@ class CBRestConnection(object):
 
     @staticmethod
     def check_if_couchbase_is_active(rest, max_retry=5):
-        api = rest.base_url + 'nodes/self'
+        api = rest.base_url + '/nodes/self'
         if rest.type != "default" or rest.type == "nebula":
             api = rest.base_url + "pools/default"
         # for Node is unknown to this cluster error
@@ -105,13 +101,12 @@ class CBRestConnection(object):
         unexpected_server_err_msg = "Unexpected server error, request logged"
         headers = rest.create_headers(rest.username, rest.password,
                                       'application/json')
-        for iteration in xrange(max_retry):
+        for iteration in range(max_retry):
             http_res = None
             success = False
             try:
-                status, content, header = rest.http_request(
+                status, http_res, _ = rest.http_request(
                     api, CBRestConnection.GET, headers=headers, timeout=30)
-                http_res = json.loads(content)
                 if status:
                     success = True
                 else:
@@ -157,7 +152,6 @@ class CBRestConnection(object):
         self.session = None
 
         self.log = logging.getLogger("rest_api")
-
 
     def create_headers(self, username=None, password=None,
                        content_type='application/x-www-form-urlencoded'):
@@ -256,57 +250,38 @@ class CBRestConnection(object):
                     raise ServerUnavailableException(ip=self.ip)
             sleep(3, log_type="infra")
 
-
-    def http_request(self, api, method='GET', params='', headers=None,
-                      timeout=300):
+    def http_request(self, api, method='GET', params=None, data=None,
+                     headers=None, timeout=300):
         if not headers:
             headers = self.create_headers()
-        if CbServer.use_https:
-            status, content, response = \
-                self._urllib_request(api, method=method, params=params, headers=headers,
-                                     timeout=timeout, verify=False)
-            return status, content, response
+        request_params = {"method": method, "url": api,
+                          "headers": headers, "timeout": timeout,
+                          "verify": False}
+        if params:
+            request_params["params"] = params
+        if data:
+            request_params["data"] = data
         end_time = time.time() + timeout
         while True:
             try:
-                response, content = httplib2.Http(timeout=timeout).request(
-                    api, method, params, headers)
-                if response.status in [200, 201, 202, 204]:
-                    return True, content, response
+                status = False
+                response = requests.request(**request_params)
+                content = response.content
+                if response.status_code in [200, 201, 202, 204]:
+                    status = True
                 else:
-                    try:
-                        json_parsed = json.loads(content)
-                    except ValueError:
-                        json_parsed = dict()
-                        json_parsed["error"] = "status: {0}, content: {1}" \
-                            .format(response['status'], content)
-                    reason = "unknown"
-                    if "error" in json_parsed:
-                        reason = json_parsed["error"]
-                    if ("accesskey" in params.lower()) or ("secretaccesskey" in params.lower()) or (
-                            "password" in params.lower()) or ("secretkey" in params.lower()):
-                        message = '{0} {1} body: {2} headers: {3} ' \
-                                  'error: {4} reason: {5} {6} {7}'. \
-                            format(method, api, "Body is being redacted because it contains sensitive info", headers,
-                                   response['status'], reason,
-                                   content.rstrip('\n'),
-                                   self.get_auth(headers))
-                    else:
-                        message = '{0} {1} body: {2} headers: {3} ' \
-                                  'error: {4} reason: {5} {6} {7}'. \
-                            format(method, api, params, headers,
-                                   response['status'], reason,
-                                   content.rstrip('\n'),
-                                   self.get_auth(headers))
-                    self.log.debug(message)
-                    self.log.debug(''.join(traceback.format_stack()))
-                    return False, content, response
+                    self.log.warning(f"API {api} failed with response: {content}")
+                try:
+                    content = response.json()
+                except ValueError:
+                    pass
+                return status, content, response
             except socket.error as e:
                 self.log.error("Socket error while connecting to {0}. "
                                "Error {1}".format(api, e))
                 if time.time() > end_time:
                     raise ServerUnavailableException(ip=self.ip)
-            except httplib2.ServerNotFoundError as e:
+            except Exception as e:
                 self.log.error("ServerNotFoundError while connecting to {0}. "
                                "Error {1}".format(api, e))
                 if time.time() > end_time:

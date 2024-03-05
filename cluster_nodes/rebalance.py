@@ -13,15 +13,23 @@ class RebalanceRestAPI(CBRestConnection):
         POST :: /controller/rebalance
         docs.couchbase.com/server/current/rest-api/rest-cluster-rebalance.html
         """
+        api = self.base_url + "/controller/rebalance"
         known_nodes = ','.join(known_nodes)
-        if eject_nodes is None:
-            eject_nodes = ""
-        else:
-            eject_nodes = ','.join(eject_nodes)
-        params = {'knownNodes': known_nodes,
-                  'ejectedNodes': eject_nodes}
-        raise NotImplementedError()
+        params = {"knownNodes": known_nodes}
+        if eject_nodes:
+            params["ejectedNodes"] = eject_nodes
+        status, content, _ = self.http_request(api, self.POST,
+                                               data=params)
+        return status, content
 
+    def stop_rebalance(self):
+        """
+        POST :: /controller/stopRebalance
+        No documentation present
+        """
+        api = self.base_url + '/controller/stopRebalance'
+        status, content, _ = self.http_request(api, 'POST')
+        return status, content
 
     def rebalance_progress(self):
         """

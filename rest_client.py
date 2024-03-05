@@ -1,4 +1,4 @@
-from Cb_constants import CbServer
+from cb_constants import CbServer
 from cb_server_rest_util.analytics.analytics_api import AnalyticsRestAPI
 from cb_server_rest_util.cluster_nodes.cluster_nodes_api import ClusterRestAPI
 from cb_server_rest_util.index.index_api import IndexRestAPI
