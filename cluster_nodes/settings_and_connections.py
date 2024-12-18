@@ -33,6 +33,80 @@ class SettingsAndConnectionsAPI(CBRestConnection):
                                               params=params)
         return status, json_parsed
 
+    def get_all_secrets(self):
+        """
+        GET :: /secrets
+        """
+        api = f"{self.base_url}/secrets"
+        status, json_parsed, _ = self.request(api, method=self.GET)
+        return status, json_parsed
+
+    def get_specific_secret(self, secret_id):
+        """
+        GET :: /secrets/<secret_id>
+        """
+        api = f"{self.base_url}/secrets/{secret_id}"
+        status, json_parsed, _ = self.request(api, method=self.GET)
+        return status, json_parsed
+
+    def download_keks(self, secret_id):
+        """
+        GET :: /secrets/<secret_id>/backup
+        """
+        api = f"{self.base_url}/secrets/{secret_id}/backup"
+        status, json_parsed, _ = self.request(api, method=self.GET)
+        return status, json_parsed
+
+    def modify_secret(self, secret_id, params):
+        """
+        PUT :: /secrets/<secret_id>
+        """
+        api = f"{self.base_url}/secrets/{secret_id}"
+        status, json_parsed, _ = self.request(api, method=self.PUT,
+                                              params=params)
+        return status, json_parsed
+
+    def delete_secret(self, secret_id):
+        """
+        DELETE :: /secrets/<secret_id>
+        """
+        api = f"{self.base_url}/secrets/{secret_id}"
+        status, json_parsed, _ = self.request(api, method=self.DELETE)
+        return status, json_parsed
+
+    def get_encryption_at_rest_config(self):
+        """
+        GET :: /settings/security/encryptionAtRest
+        """
+        api = f"{self.base_url}/settings/security/encryptionAtRest"
+        status, json_parsed, _ = self.request(api, method=self.GET)
+        return status, json_parsed
+
+    def configure_encryption_at_rest(self, params):
+        """
+        POST :: /settings/security/encryptionAtRest
+        """
+        api = f"{self.base_url}/settings/security/encryptionAtRest"
+        status, json_parsed, _ = self.request(api, method=self.POST,
+                                              params=params)
+        return status, json_parsed
+
+    def trigger_data_reencryption(self, bucket):
+        """
+        POST :: /controller/dropEncryptionAtRestKeys/bucket/<bucket>
+        """
+        api = f"{self.base_url}/controller/dropEncryptionAtRestKeys/bucket/{bucket}"
+        status, json_parsed, _ = self.request(api, method=self.POST)
+        return status, json_parsed
+
+    def trigger_kek_rotation(self, secret_id):
+        """
+        POST :: /controller/rotateSecret/<secret_id>
+        """
+        api = f"{self.base_url}/controller/rotateSecret/{secret_id}"
+        status, json_parsed, _ = self.request(api, method=self.POST)
+        return status, json_parsed
+
     def enable_config_encryption(self, secret_id):
         """
         POST :: /settings/security/encryptionAtRest
