@@ -72,6 +72,7 @@ class CBRestConnection(object):
         query_port = CbServer.n1ql_port
         eventing_port = CbServer.eventing_port
         backup_port = CbServer.backup_port
+        cbas_port = CbServer.cbas_port
         hostname = None
 
         if hasattr(server, 'index_port') and server.index_port:
@@ -82,6 +83,8 @@ class CBRestConnection(object):
             fts_port = server.fts_port
         if hasattr(server, 'eventing_port') and server.eventing_port:
             eventing_port = server.eventing_port
+        if hasattr(server, 'cbas_port') and server.cbas_port:
+            cbas_port = server.cbas_port
         if hasattr(server, 'hostname') and server.hostname \
                 and server.hostname.find(self.ip) == -1:
             hostname = server.hostname
@@ -99,6 +102,7 @@ class CBRestConnection(object):
                 fts_port = CbServer.ssl_fts_port
                 eventing_port = CbServer.ssl_eventing_port
                 backup_port = CbServer.ssl_backup_port
+                cbas_port = CbServer.ssl_cbas_port
 
         http_url = "http://{0}:{1}"
         https_url = "https://{0}:{1}"
@@ -115,6 +119,7 @@ class CBRestConnection(object):
         self.fts_url = generic_url.format(url_host, fts_port)
         self.eventing_url = generic_url.format(url_host, eventing_port)
         self.backup_url = generic_url.format(url_host, backup_port)
+        self.cbas_url = generic_url.format(url_host, cbas_port)
         if hasattr(server, "type"):
             self.type = server.type
 
