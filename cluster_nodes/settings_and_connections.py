@@ -265,3 +265,20 @@ class SettingsAndConnectionsAPI(CBRestConnection):
         -d alerts=<[alert-name]*>
         -d pop_up_alerts=<[alert-name]*>
         enabled=[ true | false ]"""
+
+    def set_cgroup_overrides(self, service, soft_limit, hard_limit):
+        """
+        POST :: /settings/cgroups
+        """
+        api = self.base_url + "/settings/cgroups"
+        data = f"service={service};hard={hard_limit};soft={soft_limit}"
+        status, content, _ = self.request(api, CBRestConnection.POST, params=data)
+        return status, content
+
+    def get_cgroup_overrides(self):
+        """
+        GET :: /settings/cgroups
+        """
+        api = self.base_url + "/settings/cgroups"
+        status, content, _ = self.request(api, CBRestConnection.GET)
+        return status, content
