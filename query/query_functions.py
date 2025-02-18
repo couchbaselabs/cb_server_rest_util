@@ -17,5 +17,10 @@ class QueryFunctions(CBRestConnection):
 
         api = self.query_url + "/query/service"
         params = {"statement": query}
-        status, content, _ = self.request(api, self.POST, params, timeout=timeout)
+
+        if timeout:
+            status, content, _ = self.request(api, self.POST, params, timeout=timeout)
+        else:
+            status, content, _ = self.request(api, self.POST, params)
+
         return status, content
