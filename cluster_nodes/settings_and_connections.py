@@ -282,3 +282,11 @@ class SettingsAndConnectionsAPI(CBRestConnection):
         api = self.base_url + "/settings/cgroups"
         status, content, _ = self.request(api, CBRestConnection.GET)
         return status, content
+
+    def delete_cgroup_override(self, service):
+        """
+        DELETE :: /settings/cgroups/{service}
+        """
+        api = f"{self.base_url}/settings/cgroups/{service}"
+        status, content, _ = self.request(api, CBRestConnection.DELETE)
+        return status, content
