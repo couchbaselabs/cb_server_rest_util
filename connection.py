@@ -220,13 +220,20 @@ class CBRestConnection(object):
         while True:
             status = False
             try:
-                response = session.request(
-                    method,
-                    api,
-                    data=params,
-                    headers=headers,
-                    timeout=timeout,
-                    verify=verify)
+                request_args = {
+                    "method": method,
+                    "url": api,
+                    "headers": headers,
+                    "timeout": timeout,
+                    "verify": verify,
+                }
+                if method.upper() == "GET" and params:
+                    request_args["params"] = params  # Send as query params
+                elif method.upper() != "GET":
+                    request_args["data"] = params # Send as body payload
+
+                response = session.request(**request_args)
+
                 content = response.content
                 if 200 <= response.status_code < 300:
                     status = True
