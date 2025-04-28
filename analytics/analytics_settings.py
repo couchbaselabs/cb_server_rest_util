@@ -54,7 +54,8 @@ class AnalyticsSettingsAPI(CBRestConnection):
     def update_analytics_settings(
             self, num_replicas=None, blob_storage_region=None,
             blob_storage_prefix=None, blob_storage_bucket=None,
-            blob_storage_scheme=None):
+            blob_storage_scheme=None, profile=None,
+            endpoint_url=None):
         """
         POST /settings/analytics
         https://docs.couchbase.com/server/current/analytics/rest-settings.html
@@ -68,8 +69,11 @@ class AnalyticsSettingsAPI(CBRestConnection):
         blob_storage_scheme : For now only "s3" is supported.
         """
         api = self.base_url + "/settings/analytics"
+        if profile == "columnar":
+            api = self.base_url + "/settings/columnar"
         params = {}
-
+        if endpoint_url:
+            params["blobStorageEndpoint"] = endpoint_url
         if num_replicas:
             params["numReplicas"] = num_replicas
         if blob_storage_region:
