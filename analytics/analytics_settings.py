@@ -88,6 +88,6 @@ class AnalyticsSettingsAPI(CBRestConnection):
         if blob_storage_list_eventually_consistent:
             params["blobStorageListEventuallyConsistent"] = "true"
         if blob_storage_force_path_style:
-        params["blobStorageForcePathStyle"] = "true"
+            params["blobStorageForcePathStyle"] = "true"
         status, content, _ = self.request(api, self.POST, params=params)
         return status, content
