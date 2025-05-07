@@ -84,6 +84,6 @@ class AnalyticsSettingsAPI(CBRestConnection):
             params["blobStorageBucket"] = blob_storage_bucket
         if blob_storage_scheme:
             params["blobStorageScheme"] = blob_storage_scheme
-        params["blobStorageListEventuallyConsistent"] = True
+        params["blobStorageListEventuallyConsistent"] = "true"
         status, content, _ = self.request(api, self.POST, params=params)
         return status, content
