@@ -70,8 +70,6 @@ class AnalyticsSettingsAPI(CBRestConnection):
         blob_storage_scheme : For now only "s3" is supported.
         """
         api = self.base_url + "/settings/analytics"
-        if profile == "columnar":
-            api = self.base_url + "/settings/columnar"
         params = {}
         if endpoint_url:
             params["blobStorageEndpoint"] = endpoint_url
