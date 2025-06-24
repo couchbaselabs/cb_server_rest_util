@@ -24,6 +24,7 @@ class ScopeAndCollectionsAPI(CBRestConnection):
         DELETE :: /pools/default/buckets/<bucket_name>/scopes
         """
         bucket_name = quote(bucket_name)
+        scope_name = quote(scope_name)
         api = self.base_url \
             + f"/pools/default/buckets/{bucket_name}/scopes/{scope_name}"
         status, content, _ = self.request(api, self.DELETE)
