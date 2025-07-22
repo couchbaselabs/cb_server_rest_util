@@ -126,7 +126,7 @@ class CBRestConnection(object):
     @staticmethod
     def check_if_couchbase_is_active(rest, max_retry=5):
         api = rest.base_url + '/nodes/self'
-        if rest.type not in ["default", "columnar"] or rest.type == "nebula":
+        if rest.type not in ["default", "analytics"] or rest.type == "nebula":
             api = rest.base_url + "/pools/default"
         # for Node is unknown to this cluster error
         node_unknown_msg = "Node is unknown to this cluster"
