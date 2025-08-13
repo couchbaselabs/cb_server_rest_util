@@ -187,14 +187,20 @@ class SettingsAndConnectionsAPI(CBRestConnection):
         content = response.json if status else response.text
         return status, content
 
-    def manage_cluster_connections(self, max_connections=None,
-                                   system_connections=None, num_writer_threads=None, num_reader_threads=None,
-                                   num_storage_threads=None):
+    def manage_global_memcached_setting(self, max_connections=None,
+                                        system_connections=None, num_writer_threads=None,
+                                        num_reader_threads=None, num_storage_threads=None,
+                                        fusion_sync_rate_limit=None, fusion_migration_rate_limit=None):
         """
         POST / GET /pools/default/settings/memcached/global
         https://docs.couchbase.com/server/current/rest-api/rest-manage-cluster-connections.html
         :param max_connections:
         :param system_connections:
+        :param num_writer_threads:
+        :param num_reader_threads:
+        :param num_storage_threads:
+        :param fusion_sync_rate_limit:
+        :param fusion_migration_rate_limit:
         :return:
         """
         api = self.base_url + "/pools/default/settings/memcached/global"
@@ -209,14 +215,18 @@ class SettingsAndConnectionsAPI(CBRestConnection):
             params["num_writer_threads"] = num_writer_threads
         if num_storage_threads is not None:
             params["num_storage_threads"] = num_storage_threads
+        if fusion_sync_rate_limit is not None:
+            params["fusion_sync_rate_limit"] = fusion_sync_rate_limit
+        if fusion_migration_rate_limit is not None:
+            params["fusion_migration_rate_limit"] = fusion_migration_rate_limit
         if params:
             # POST method
             status, _, response = self.request(api, CBRestConnection.POST,
-                                            params=params)
+                                               params=params)
         else:
             # GET method
             status, _, response = self.request(api, CBRestConnection.GET)
-        content = response.json if status else response.text
+        content = response.json() if status else response.text
         return status, content
 
     def manage_alternate_address(self, alternate_addr, alternate_ports=None,
